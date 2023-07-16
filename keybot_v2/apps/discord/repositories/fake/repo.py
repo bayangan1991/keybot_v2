@@ -1,11 +1,11 @@
 from collections.abc import Collection
-from datetime import datetime, timedelta
+from datetime import datetime
 from itertools import chain
 from typing import Any
 
 from pydantic import BaseModel
 
-from keybot_v2.domain.expections import (
+from keybot_v2.apps.discord.domain.expections import (
     KeyNotFoundError,
     GuildMembershipError,
     TitleDoesNotExistError,
@@ -13,10 +13,9 @@ from keybot_v2.domain.expections import (
 )
 
 from .models import FakeTitle, FakeGame, FakeMember, FakeGuild
-from keybot_v2.domain.models import Platform
-from keybot_v2.repositories.types import BaseRepository, BaseSession
-from ...config import settings
-from keybot_v2.domain.services import member_can_claim
+from keybot_v2.apps.discord.domain.models import Platform
+from keybot_v2.apps.discord.repositories.types import DiscordRepository, BaseSession
+from keybot_v2.apps.discord.domain.services import member_can_claim
 
 
 class FakeSession(BaseSession):
@@ -34,7 +33,7 @@ class FakeSession(BaseSession):
         ...
 
 
-class FakeRepository(BaseRepository):
+class FakeRepository(DiscordRepository):
     titles: set[FakeTitle]
     games: dict[str, FakeGame]
     members: dict[str, FakeMember]
@@ -43,26 +42,25 @@ class FakeRepository(BaseRepository):
     def __init__(
         self,
         *,
+        session: FakeSession,
         games: dict[str, FakeGame] | None = None,
         titles: set[FakeTitle] | None = None,
         members: dict[str, FakeMember] | None = None,
         guilds: dict[str, FakeGuild] | None = None,
     ) -> None:
+        self.session = session
+
         self.titles = titles or set()
         self.games = games or {}
         self.members = members or {}
         self.guilds = guilds or {}
 
-    def get_session(self) -> FakeSession:
-        return FakeSession()
-
-    def check_key_exists(self, *, session: FakeSession, key: str) -> bool:
+    def check_key_exists(self, *, key: str) -> bool:
         return key in self.games
 
     def get_title(
         self,
         *,
-        session: FakeSession,
         name: str,
         create: bool = True,
     ) -> FakeTitle:
@@ -70,36 +68,33 @@ class FakeRepository(BaseRepository):
         if title not in self.titles:
             if create:
                 self.titles.add(title)
-                session.add(title)
+                self.session.add(title)
             else:
                 raise TitleDoesNotExistError()
         return title
 
-    def get_member(self, *, session: FakeSession, id: str) -> FakeMember:
+    def get_member(self, *, id: str) -> FakeMember:
         if not (member := self.members.get(id)):
             member = FakeMember(id=id, games=[])
             self.members[id] = member
-            session.add(member)
+            self.session.add(member)
 
         return member
 
-    def get_guild(self, *, session: FakeSession, id: str) -> FakeGuild:
+    def get_guild(self, *, id: str) -> FakeGuild:
         if not (guild := self.guilds.get(id)):
             guild = FakeGuild(id=id, members=set())
             self.guilds[id] = guild
-            session.add(guild)
+            self.session.add(guild)
 
         return guild
 
-    def check_member_has_key(
-        self, *, session: FakeSession, member: FakeMember, key: str
-    ) -> bool:
+    def check_member_has_key(self, *, member: FakeMember, key: str) -> bool:
         return len(list(filter(lambda game: game.key == key, member.games))) == 1
 
     def add_key(
         self,
         *,
-        session: FakeSession,
         member: FakeMember,
         platform: Platform,
         title: FakeTitle,
@@ -107,13 +102,11 @@ class FakeRepository(BaseRepository):
     ) -> FakeGame:
         new_game = FakeGame(platform=platform, title=title, key=key, owner=member)
         member.games.append(new_game)
-        session.add(new_game)
+        self.session.add(new_game)
         return new_game
 
-    def remove_key(
-        self, *, session: FakeSession, key: str, member: FakeMember
-    ) -> tuple[FakeTitle, str]:
-        if self.check_member_has_key(session=session, member=member, key=key):
+    def remove_key(self, *, key: str, member: FakeMember) -> tuple[FakeTitle, str]:
+        if self.check_member_has_key(member=member, key=key):
             game = next(game for game in member.games if game.key == key)
             member.games.remove(game)
             return game.title, game.key
@@ -122,7 +115,6 @@ class FakeRepository(BaseRepository):
     def get_games(
         self,
         *,
-        session: FakeSession,
         target: FakeMember | FakeGuild,
     ) -> Collection[FakeGame]:
         match target:
@@ -134,7 +126,6 @@ class FakeRepository(BaseRepository):
     def add_member_to_guild(
         self,
         *,
-        session: FakeSession,
         member: FakeMember,
         guild: FakeGuild,
     ) -> None:
@@ -146,7 +137,6 @@ class FakeRepository(BaseRepository):
     def remove_member_from_guild(
         self,
         *,
-        session: FakeSession,
         member: FakeMember,
         guild: FakeGuild,
     ) -> None:
@@ -158,7 +148,6 @@ class FakeRepository(BaseRepository):
     def claim_title(
         self,
         *,
-        session: FakeSession,
         member: FakeMember,
         title: FakeTitle,
         platform: Platform,
@@ -178,7 +167,7 @@ class FakeRepository(BaseRepository):
         if not member_can_claim(member=member):
             raise UnableToClaimError()
 
-        available_games = self.get_games(session=session, target=guild)
+        available_games = self.get_games(session=self.session, target=guild)
 
         try:
             guild_key = next(

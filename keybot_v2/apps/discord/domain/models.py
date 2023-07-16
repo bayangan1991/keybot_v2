@@ -20,7 +20,7 @@ class BaseGame(Protocol):
 
 class BaseMember(Protocol):
     id: str
-    last_claim: datetime | None
+    last_claim: datetime | None = None
 
 
 class BaseGuild(Protocol):

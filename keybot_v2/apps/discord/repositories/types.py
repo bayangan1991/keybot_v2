@@ -1,15 +1,20 @@
 from __future__ import annotations
-from typing import Protocol, TYPE_CHECKING, Any
+from typing import Protocol, TYPE_CHECKING, Any, TypeVar
 from collections.abc import Collection
 
 if TYPE_CHECKING:
-    from keybot_v2.domain.models import (
+    from keybot_v2.apps.discord.domain.models import (
         BaseGame,
         BaseTitle,
         BaseMember,
         Platform,
         BaseGuild,
     )
+
+_Game = TypeVar("_Game", bound=BaseGame, covariant=True)
+_Title = TypeVar("_Title", bound=BaseTitle)
+_Member = TypeVar("_Member", bound=BaseMember)
+_Guild = TypeVar("_Guild", bound=BaseGuild)
 
 
 class BaseSession(Protocol):
@@ -23,23 +28,17 @@ class BaseSession(Protocol):
         ...
 
 
-class BaseRepository(Protocol):
+class DiscordRepository(Protocol[_Game, _Title, _Member, _Guild]):
     def get_session(self) -> BaseSession:
         ...
 
-    def check_key_exists(
-        self,
-        *,
-        session: BaseSession,
-        key: str,
-    ) -> bool:
+    def check_key_exists(self, *, key: str) -> bool:
         ...
 
     def check_member_has_key(
         self,
         *,
-        session: BaseSession,
-        member: BaseMember,
+        member: _Member,
         key: str,
     ) -> bool:
         ...
@@ -47,81 +46,72 @@ class BaseRepository(Protocol):
     def get_title(
         self,
         *,
-        session: BaseSession,
         name: str,
         create: bool = ...,
-    ) -> BaseTitle:
+    ) -> _Title:
         ...
 
     def get_member(
         self,
         *,
-        session: BaseSession,
         id: str,
-    ) -> BaseMember:
+    ) -> _Member:
         ...
 
     def get_guild(
         self,
         *,
-        session: BaseSession,
         id: str,
-    ) -> BaseGuild:
+    ) -> _Guild:
         ...
 
     def add_key(
         self,
         *,
-        session: BaseSession,
-        member: BaseMember,
+        member: _Member,
         platform: Platform,
-        title: BaseTitle,
+        title: _Title,
         key: str,
-    ) -> BaseGame:
+    ) -> _Game:
         ...
 
     def remove_key(
         self,
         *,
-        session: BaseSession,
-        member: BaseMember,
+        member: _Member,
         key: str,
-    ) -> tuple[BaseTitle, str]:
+    ) -> tuple[_Title, str]:
         ...
 
     def get_games(
         self,
         *,
-        session: BaseSession,
-        target: BaseMember | BaseGuild,
-    ) -> Collection[BaseGame]:
+        target: _Member | _Guild,
+    ) -> Collection[_Game]:
         ...
 
     def add_member_to_guild(
         self,
         *,
-        session: BaseSession,
-        member: BaseMember,
-        guild: BaseGuild,
+        member: _Member,
+        guild: _Guild,
     ) -> None:
         ...
 
     def remove_member_from_guild(
         self,
         *,
-        session: BaseSession,
-        member: BaseMember,
-        guild: BaseGuild,
+        member: _Member,
+        guild: _Guild,
     ) -> None:
         ...
 
     def claim_title(
         self,
         *,
-        session: BaseSession,
-        member: BaseMember,
-        title: BaseTitle,
+        member: _Member,
+        title: _Title,
         platform: Platform,
-        guild: BaseGuild,
-    ) -> BaseGame:
+        guild: _Guild,
+    ) -> _Game:
         ...

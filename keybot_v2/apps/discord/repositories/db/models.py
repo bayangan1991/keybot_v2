@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import ClassVar
+from typing import ClassVar, Any, TYPE_CHECKING
 
 from sqlmodel import Field, Relationship, SQLModel
+
+from keybot_v2.apps.discord.domain.models import Platform
 
 
 class TitleInDB(SQLModel, table=True):
@@ -12,7 +14,7 @@ class TitleInDB(SQLModel, table=True):
     name: str = Field(unique=True)
     games: GameInDB = Relationship()
 
-    def __lt__(self, other):
+    def __lt__(self, other: Any) -> bool:
         if isinstance(other, TitleInDB):
             return self.name < other.name
         raise NotImplementedError()
@@ -20,7 +22,7 @@ class TitleInDB(SQLModel, table=True):
     def __hash__(self) -> int:
         return hash(self.name)
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Any) -> bool:
         if isinstance(other, TitleInDB):
             return self.pk == other.pk
         raise NotImplementedError()
@@ -28,7 +30,10 @@ class TitleInDB(SQLModel, table=True):
 
 class GameInDB(SQLModel, table=True):
     __tablename__: ClassVar[str] = "games"
-    platform: str
+    if TYPE_CHECKING:
+        platform: Platform
+    else:
+        platform: str
     key: str
     pk: int | None = Field(default=None, primary_key=True)
     title_pk: int = Field(foreign_key="titles.pk")
@@ -39,7 +44,7 @@ class GameInDB(SQLModel, table=True):
     def __hash__(self) -> int:
         return hash(self.pk)
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Any) -> bool:
         if isinstance(other, GameInDB):
             return self.pk == other.pk
         raise NotImplementedError()
@@ -63,7 +68,7 @@ class MemberInDB(SQLModel, table=True):
     def __hash__(self) -> int:
         return hash(self.pk)
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Any) -> bool:
         if isinstance(other, MemberInDB):
             return self.pk == other.pk
         raise NotImplementedError()
@@ -80,7 +85,7 @@ class GuildInDB(SQLModel, table=True):
     def __hash__(self) -> int:
         return hash(self.pk)
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Any) -> bool:
         if isinstance(other, GuildInDB):
             return self.pk == other.pk
         raise NotImplementedError()

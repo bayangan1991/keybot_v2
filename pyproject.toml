@@ -69,3 +69,5 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.pyright]
 reportGeneralTypeIssues = false
+reportUnknownVariableType = false
+typeCheckingMode = "strict"

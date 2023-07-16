@@ -5,7 +5,7 @@ from typing import Any
 
 from pydantic import BaseModel
 
-from keybot_v2.domain.models import Platform
+from keybot_v2.apps.discord.domain.models import Platform
 
 
 class FakeTitle(BaseModel):
