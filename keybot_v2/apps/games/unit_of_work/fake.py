@@ -5,9 +5,8 @@ from types import TracebackType
 from typing_extensions import Self
 
 from keybot_v2.apps.core.types import SessionFactory
+from keybot_v2.apps.games.repositories.fake.repo import FakeRepository, FakeSession
 from keybot_v2.apps.games.unit_of_work.types import GameUnitOfWork
-
-from keybot_v2.apps.games.repositories.fake.repo import FakeSession, FakeRepository
 
 
 class FakeUnitOfWork(GameUnitOfWork[FakeSession]):

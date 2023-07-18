@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-
 from sqlmodel import Field, Relationship
 
-from keybot_v2.apps.games.domain.models import Title, Game
+from keybot_v2.apps.games.domain.models import Game, Title
 
 
 class TitleInDB(Title, table=True):

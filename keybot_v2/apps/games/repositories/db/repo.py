@@ -2,10 +2,10 @@ from typing import Any
 
 from sqlmodel import Session, select
 
-from .models import TitleInDB, GameInDB
-from ..types import GameRepository
 from ...domain.expections import TitleDoesNotExist
 from ...domain.models import Platform
+from ..types import GameRepository
+from .models import GameInDB, TitleInDB
 
 
 class SQLModelRepository(GameRepository[Session]):

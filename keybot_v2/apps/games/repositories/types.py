@@ -1,13 +1,14 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Protocol, TypeVar
 
 from keybot_v2.apps.core.types import BaseRepository, BaseSession
 
 if TYPE_CHECKING:
     from keybot_v2.apps.games.domain.models import (
+        Game,
         Platform,
         Title,
-        Game,
     )
 
 _S = TypeVar("_S", bound=BaseSession, covariant=True)

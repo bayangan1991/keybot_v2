@@ -1,7 +1,7 @@
-from .models import Game, Platform, Title
-from .expections import KeyAlreadyExists
-from ..unit_of_work.types import GameUnitOfWork
 from ...core.types import BaseSession
+from ..unit_of_work.types import GameUnitOfWork
+from .expections import KeyAlreadyExists
+from .models import Game, Platform, Title
 
 
 def add_key(

@@ -2,12 +2,11 @@ from typing import Callable
 
 import pytest
 
-from keybot_v2.apps.games.repositories.fake.repo import FakeSession
-
 from keybot_v2.apps.games.domain.services import (
     add_key,
     remove_key,
 )
+from keybot_v2.apps.games.repositories.fake.repo import FakeSession
 from keybot_v2.apps.games.unit_of_work.fake import FakeUnitOfWork
 
 GAME_NAME = "Game Name"

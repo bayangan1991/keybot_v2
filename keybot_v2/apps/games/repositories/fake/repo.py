@@ -3,14 +3,13 @@ from typing import Any
 from pydantic import BaseModel
 
 from keybot_v2.apps.core.types import BaseSession
+from keybot_v2.apps.discord.domain.models import Platform
 from keybot_v2.apps.games.domain.expections import (
     KeyAlreadyExists,
-    TitleDoesNotExist,
     KeyDoesNotExist,
+    TitleDoesNotExist,
 )
-
-from keybot_v2.apps.discord.domain.models import Platform
-from keybot_v2.apps.games.domain.models import Title, Game
+from keybot_v2.apps.games.domain.models import Game, Title
 from keybot_v2.apps.games.repositories.types import GameRepository
 
 

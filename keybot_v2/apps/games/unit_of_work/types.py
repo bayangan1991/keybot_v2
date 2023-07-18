@@ -2,9 +2,10 @@ from __future__ import annotations
 
 from types import TracebackType
 from typing import Protocol, TypeVar
+
 from typing_extensions import Self
 
-from keybot_v2.apps.core.types import SessionFactory, BaseSession
+from keybot_v2.apps.core.types import BaseSession, SessionFactory
 from keybot_v2.apps.games.repositories.types import GameRepository
 
 _S = TypeVar("_S", bound=BaseSession)
