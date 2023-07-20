@@ -68,6 +68,9 @@ class FakeRepository(DiscordRepository[FakeSession]):
         member = self.get_member(id=member_id)
         self.get_guild(id=guild_id)
         if member in self.guilds[guild_id]:
-            self.guilds[guild_id].add(member)
+            self.guilds[guild_id].remove(member)
         else:
             raise FailedToLeave()
+
+    def get_guild_members(self, guild_id: str) -> set[Member]:
+        return self.guilds[guild_id]

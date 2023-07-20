@@ -3,37 +3,26 @@ from __future__ import annotations
 from typing import Callable
 
 import pytest
-from sqlalchemy.orm import sessionmaker
-from sqlmodel import Session, SQLModel, create_engine
 
 from keybot_v2.apps.discord.domain.services import (
     join_guild,
     leave_guild,
 )
-from keybot_v2.apps.discord.unit_of_work.sqlmodeluow import DBUnitOfWork
-from keybot_v2.config import settings
+from keybot_v2.apps.discord.repositories.fake.repo import FakeSession
+from keybot_v2.apps.discord.unit_of_work.fake import FakeUnitOfWork
 
-SessionFactory = Callable[..., Session]
+SessionFactory = Callable[..., FakeSession]
 
 
 @pytest.fixture
-def session_factory() -> sessionmaker[Session]:
-    from ..repositories.db.models import (  # noqa
-        GuildInDB,
-        MemberInDB,
-        MemberToGuildLink,
-    )
-
-    engine = create_engine("sqlite:///:memory:", echo=settings.db.echo)
-    SQLModel.metadata.create_all(engine)
-
-    return sessionmaker(bind=engine, class_=Session)
+def session_factory() -> FakeSession:
+    return lambda: FakeSession()
 
 
 def test_member_can_join_and_leave_guild(
     session_factory: SessionFactory,
 ) -> None:
-    with DBUnitOfWork(session_factory=session_factory) as uow:
+    with FakeUnitOfWork(session_factory=session_factory) as uow:
         guild = uow.repo.get_guild(id="test")
         member_1 = uow.repo.get_member(id="test-member-1")
         member_2 = uow.repo.get_member(id="test-member-2")
