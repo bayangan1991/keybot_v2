@@ -1,7 +1,7 @@
 from typing import Callable, Protocol, TypeVar
 
-from keybot_v2.apps.core.types import BaseUnitOfWork
-from keybot_v2.apps.discord.repositories.types import BaseSession, DiscordRepository
+from src.apps.core.types import BaseUnitOfWork
+from src.apps.discord.repositories.types import BaseSession, DiscordRepository
 
 SessionFactory = Callable[..., Callable[..., BaseSession]]
 

@@ -3,10 +3,10 @@ from __future__ import annotations
 from collections.abc import Collection
 from typing import TYPE_CHECKING, Protocol, TypeVar
 
-from keybot_v2.apps.core.types import BaseRepository, BaseSession
+from src.apps.core.types import BaseRepository, BaseSession
 
 if TYPE_CHECKING:
-    from keybot_v2.apps.discord.domain.models import Guild, Member
+    from src.apps.discord.domain.models import Guild, Member
 
 _S_co = TypeVar("_S_co", bound=BaseSession, covariant=True)
 

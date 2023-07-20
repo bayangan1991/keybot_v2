@@ -1,4 +1,4 @@
-from keybot_v2.apps.core.types import BaseSession
+from src.apps.core.types import BaseSession
 
 from ..unit_of_work.types import DiscordUnitOfWork
 

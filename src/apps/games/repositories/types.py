@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Protocol, TypeVar
 
-from keybot_v2.apps.core.types import BaseRepository, BaseSession
+from src.apps.core.types import BaseRepository, BaseSession
 
 if TYPE_CHECKING:
-    from keybot_v2.apps.games.domain.models import (
+    from src.apps.games.domain.models import (
         Game,
         Platform,
         Title,

@@ -2,14 +2,14 @@ from typing import Any
 
 from pydantic import BaseModel
 
-from keybot_v2.apps.core.types import BaseSession
-from keybot_v2.apps.games.domain.expections import (
+from src.apps.core.types import BaseSession
+from src.apps.games.domain.expections import (
     KeyAlreadyExists,
     KeyDoesNotExist,
     TitleDoesNotExist,
 )
-from keybot_v2.apps.games.domain.models import Game, Platform, Title
-from keybot_v2.apps.games.repositories.types import GameRepository
+from src.apps.games.domain.models import Game, Platform, Title
+from src.apps.games.repositories.types import GameRepository
 
 
 class FakeSession(BaseSession):

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from sqlmodel import Field, Relationship, SQLModel
 
-from keybot_v2.apps.discord.domain.models import Guild, Member
+from src.apps.discord.domain.models import Guild, Member
 
 
 class MemberToGuildLink(SQLModel, table=True):

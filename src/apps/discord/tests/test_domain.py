@@ -4,12 +4,12 @@ from typing import Callable
 
 import pytest
 
-from keybot_v2.apps.discord.domain.services import (
+from src.apps.discord.domain.services import (
     join_guild,
     leave_guild,
 )
-from keybot_v2.apps.discord.repositories.fake.repo import FakeSession
-from keybot_v2.apps.discord.unit_of_work.fake import FakeUnitOfWork
+from src.apps.discord.repositories.fake.repo import FakeSession
+from src.apps.discord.unit_of_work.fake import FakeUnitOfWork
 
 SessionFactory = Callable[..., FakeSession]
 

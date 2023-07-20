@@ -5,9 +5,9 @@ from types import TracebackType
 from sqlalchemy.orm import sessionmaker
 from sqlmodel import Session, create_engine
 
-from keybot_v2.apps.discord.repositories.db.repo import SQLModelRepository
-from keybot_v2.apps.discord.unit_of_work.types import DiscordUnitOfWork
-from keybot_v2.config import settings
+from src.apps.discord.repositories.db.repo import SQLModelRepository
+from src.apps.discord.unit_of_work.types import DiscordUnitOfWork
+from src.config import settings
 
 ENGINE = create_engine(settings.db.url, echo=settings.db.echo)
 DEFAULT_SESSION_FACTORY = sessionmaker(bind=ENGINE, class_=Session)

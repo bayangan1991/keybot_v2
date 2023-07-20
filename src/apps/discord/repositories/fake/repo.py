@@ -2,9 +2,9 @@ from typing import Any
 
 from pydantic import BaseModel
 
-from keybot_v2.apps.discord.domain.expections import FailedToJoin, FailedToLeave
-from keybot_v2.apps.discord.domain.models import Guild, Member
-from keybot_v2.apps.discord.repositories.types import BaseSession, DiscordRepository
+from src.apps.discord.domain.expections import FailedToJoin, FailedToLeave
+from src.apps.discord.domain.models import Guild, Member
+from src.apps.discord.repositories.types import BaseSession, DiscordRepository
 
 
 class FakeSession(BaseSession):
