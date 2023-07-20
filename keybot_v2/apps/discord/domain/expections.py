@@ -1,18 +1,6 @@
-class KeyExistsError(Exception):
+class FailedToJoin(Exception):
     pass
 
 
-class KeyNotFoundError(Exception):
-    pass
-
-
-class GuildMembershipError(Exception):
-    pass
-
-
-class TitleDoesNotExistError(Exception):
-    pass
-
-
-class UnableToClaimError(Exception):
+class FailedToLeave(Exception):
     pass

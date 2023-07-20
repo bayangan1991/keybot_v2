@@ -1,27 +1,29 @@
 from datetime import datetime
-from typing import Literal, Protocol, Any
+from typing import Any
+
+from sqlmodel import SQLModel
 
 
-class BaseTitle(Protocol):
-    name: str
+class Guild(SQLModel):
+    id: str
 
-    def __lt__(self, other: Any) -> bool:
-        ...
+    def __hash__(self) -> int:
+        return hash(self.id)
 
-
-Platform = Literal["steam", "epic", "url", "gog", "playstation", "origin", "uplay"]
-
-
-class BaseGame(Protocol):
-    platform: Platform
-    title: BaseTitle
-    key: str
+    def __eq__(self, other: Any) -> bool:
+        if isinstance(other, Guild):
+            return self.id == other.id
+        return NotImplemented
 
 
-class BaseMember(Protocol):
+class Member(SQLModel):
     id: str
     last_claim: datetime | None = None
 
+    def __hash__(self) -> int:
+        return hash(self.id)
 
-class BaseGuild(Protocol):
-    id: str
+    def __eq__(self, other: Any) -> bool:
+        if isinstance(other, Member):
+            return self.id == other.id
+        return NotImplemented

@@ -1,117 +1,45 @@
 from __future__ import annotations
-from typing import Protocol, TYPE_CHECKING, Any, TypeVar
-from collections.abc import Collection
+
+from typing import TYPE_CHECKING, Protocol, TypeVar
+
+from keybot_v2.apps.core.types import BaseRepository, BaseSession
 
 if TYPE_CHECKING:
-    from keybot_v2.apps.discord.domain.models import (
-        BaseGame,
-        BaseTitle,
-        BaseMember,
-        Platform,
-        BaseGuild,
-    )
+    from keybot_v2.apps.discord.domain.models import Guild, Member
 
-_Game = TypeVar("_Game", bound=BaseGame, covariant=True)
-_Title = TypeVar("_Title", bound=BaseTitle)
-_Member = TypeVar("_Member", bound=BaseMember)
-_Guild = TypeVar("_Guild", bound=BaseGuild)
+_S_co = TypeVar("_S_co", bound=BaseSession, covariant=True)
 
 
-class BaseSession(Protocol):
-    def add(self, instance: Any, _warn: bool = False) -> None:
-        ...
-
-    def refresh(self, instance: Any) -> None:
-        ...
-
-    def commit(self) -> None:
-        ...
-
-
-class DiscordRepository(Protocol[_Game, _Title, _Member, _Guild]):
+class DiscordRepository(BaseRepository[_S_co], Protocol):
     def get_session(self) -> BaseSession:
-        ...
-
-    def check_key_exists(self, *, key: str) -> bool:
-        ...
-
-    def check_member_has_key(
-        self,
-        *,
-        member: _Member,
-        key: str,
-    ) -> bool:
-        ...
-
-    def get_title(
-        self,
-        *,
-        name: str,
-        create: bool = ...,
-    ) -> _Title:
         ...
 
     def get_member(
         self,
         *,
         id: str,
-    ) -> _Member:
+    ) -> Member:
         ...
 
     def get_guild(
         self,
         *,
         id: str,
-    ) -> _Guild:
-        ...
-
-    def add_key(
-        self,
-        *,
-        member: _Member,
-        platform: Platform,
-        title: _Title,
-        key: str,
-    ) -> _Game:
-        ...
-
-    def remove_key(
-        self,
-        *,
-        member: _Member,
-        key: str,
-    ) -> tuple[_Title, str]:
-        ...
-
-    def get_games(
-        self,
-        *,
-        target: _Member | _Guild,
-    ) -> Collection[_Game]:
+    ) -> Guild:
         ...
 
     def add_member_to_guild(
         self,
         *,
-        member: _Member,
-        guild: _Guild,
+        member_id: str,
+        guild_id: str,
     ) -> None:
         ...
 
     def remove_member_from_guild(
         self,
         *,
-        member: _Member,
-        guild: _Guild,
+        member_id: str,
+        guild_id: str,
     ) -> None:
-        ...
-
-    def claim_title(
-        self,
-        *,
-        member: _Member,
-        title: _Title,
-        platform: Platform,
-        guild: _Guild,
-    ) -> _Game:
         ...
