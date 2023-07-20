@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Collection
 from typing import TYPE_CHECKING, Protocol, TypeVar
 
 from keybot_v2.apps.core.types import BaseRepository, BaseSession
@@ -42,4 +43,7 @@ class DiscordRepository(BaseRepository[_S_co], Protocol):
         member_id: str,
         guild_id: str,
     ) -> None:
+        ...
+
+    def get_guild_members(self, guild_id: str) -> Collection[Member]:
         ...

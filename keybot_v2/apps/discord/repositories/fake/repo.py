@@ -23,34 +23,25 @@ class FakeSession(BaseSession):
 
 
 class FakeRepository(DiscordRepository[FakeSession]):
-    members: dict[str, Member]
-    guilds: dict[str, Guild]
+    guilds: dict[str, set[Member]]
 
     def __init__(
         self,
         session: FakeSession,
         *args: Any,
-        members: dict[str, Member] | None = None,
         guilds: dict[str, Guild] | None = None,
         **kwargs: Any,
     ) -> None:
         self.session = session
-
-        self.members = members or {}
         self.guilds = guilds or {}
 
     def get_member(self, *, id: str) -> Member:
-        if not (member := self.members.get(id)):
-            member = Member(id=id)
-            self.members[id] = member
-            self.session.add(member)
-
-        return member
+        return Member(id=id)
 
     def get_guild(self, *, id: str) -> Guild:
         if not (guild := self.guilds.get(id)):
             guild = Guild(id=id)
-            self.guilds[id] = guild
+            self.guilds[id] = set()
             self.session.add(guild)
 
         return guild
@@ -62,9 +53,9 @@ class FakeRepository(DiscordRepository[FakeSession]):
         guild_id: str,
     ) -> None:
         member = self.get_member(id=member_id)
-        guild = self.get_guild(id=guild_id)
-        if member not in guild.members:
-            guild.members.append(member)
+        self.get_guild(id=guild_id)
+        if member not in self.guilds[guild_id]:
+            self.guilds[guild_id].add(member)
         else:
             raise FailedToJoin()
 
@@ -75,8 +66,8 @@ class FakeRepository(DiscordRepository[FakeSession]):
         guild_id: str,
     ) -> None:
         member = self.get_member(id=member_id)
-        guild = self.get_guild(id=guild_id)
-        if member in guild.members:
-            guild.members.append(member)
+        self.get_guild(id=guild_id)
+        if member in self.guilds[guild_id]:
+            self.guilds[guild_id].add(member)
         else:
             raise FailedToLeave()

@@ -57,3 +57,6 @@ class SQLModelRepository(DiscordRepository[Session]):
         if member in guild.members:
             member.guilds.remove(guild)
             self.session.add(member)
+
+    def get_guild_members(self, guild_id: str) -> list[MemberInDB]:
+        return self.get_guild(id=guild_id).members

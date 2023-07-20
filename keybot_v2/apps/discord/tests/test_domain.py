@@ -44,11 +44,11 @@ def test_member_can_join_and_leave_guild(
         join_guild(member_id=member_1.id, guild_id=guild.id, uow=uow)
         join_guild(member_id=member_2.id, guild_id=guild.id, uow=uow)
 
-        assert member_1 in guild.members
-        assert member_2 in guild.members
+        assert member_1 in uow.repo.get_guild_members(guild_id=guild.id)
+        assert member_2 in uow.repo.get_guild_members(guild_id=guild.id)
 
         # Test that games are removed when a member leaves
         leave_guild(member_id=member_1.id, guild_id=guild.id, uow=uow)
 
-        assert member_1 not in guild.members
-        assert member_2 in guild.members
+        assert member_1 not in uow.repo.get_guild_members(guild_id=guild.id)
+        assert member_2 in uow.repo.get_guild_members(guild_id=guild.id)
